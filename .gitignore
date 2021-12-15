@@ -1,4 +1,4 @@
-ld
+_build
 _esy
 node_modules
 reason-redis.install
