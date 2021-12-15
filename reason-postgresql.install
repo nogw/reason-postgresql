@@ -1,0 +1,8 @@
+lib: [
+  "_build/install/default/lib/reason-postgresql/META"
+  "_build/install/default/lib/reason-postgresql/dune-package"
+  "_build/install/default/lib/reason-postgresql/opam"
+]
+bin: [
+  "_build/install/default/bin/server.exe"
+]

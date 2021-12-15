@@ -1,0 +1,15 @@
+(executable
+ (name server)
+ (public_name server.exe)
+ (libraries 
+  opium
+  lwt
+  caqti
+  caqti-lwt
+  caqti-driver-postgresql
+  ppx_rapper_lwt
+  uuidm
+  yojson
+ )
+ (preprocess
+  (pps ppx_deriving_yojson ppx_rapper)))

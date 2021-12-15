@@ -1,0 +1,27 @@
+{
+  "name": "reason-postgresql",
+  "version": "0.0.0",
+  "esy": {
+    "build": "dune build -p reason-postgresql",
+    "buildsInSource": "_build",
+    "release": { "releasedBinaries": [ "server.exe" ] }
+  },
+  "scripts": { "start": "esy x server.exe" },
+  "dependencies": {
+    "@esy-ocaml/reason": "^3.7.0",
+    "@opam/caqti-driver-postgresql": "1.6.0",
+    "@opam/dune": "*",
+    "@opam/lwt": "5.5.0",
+    "@opam/opium": "0.20.0",
+    "@opam/postgresql": "^4.6.3",
+    "@opam/ppx_deriving_yojson": "3.6.1",
+    "@opam/ppx_rapper": "3.0.0",
+    "@opam/ppx_rapper_lwt": "3.0.0",
+    "@opam/uuidm": "0.9.7",
+    "@opam/yojson": "1.7.0",
+    "@reason-native/console": "*",
+    "@reason-native/pastel": "*",
+    "ocaml": "4.11.0"
+  },
+  "devDependencies": { "@opam/merlin": "*", "@opam/ocaml-lsp-server": "*" }
+}
