@@ -10,6 +10,8 @@
   ppx_rapper_lwt
   uuidm
   yojson
+  pastel.lib
+  logs.fmt
  )
  (preprocess
   (pps ppx_deriving_yojson ppx_rapper)))

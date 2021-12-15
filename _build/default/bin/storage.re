@@ -1,24 +1,5 @@
 let connection_pg_url = "postgresql://postgres:postgres@localhost:5432";
 
-[@deriving yojson]
-type message = {
-  name: string,
-  message: string,
-};
-
-[@deriving yojson]
-type message_stored = {
-  id: string,
-  name: string,
-  message: string,
-};
-
-[@deriving yojson]
-type message_to_update = {
-  id: string,
-  message: string,
-};
-
 exception Query_Error(string);
 
 let (let.await) = Lwt.bind;
@@ -38,6 +19,25 @@ let dispatch = f => {
   | Ok(data) => Lwt.return(data)
   | Error(error) => Lwt.fail(Query_Error(Caqti_error.show(error)))
   };
+};
+
+[@deriving yojson]
+type message = {
+  name: string,
+  message: string,
+};
+
+[@deriving yojson]
+type message_stored = {
+  id: string,
+  name: string,
+  message: string,
+};
+
+[@deriving yojson]
+type message_to_update = {
+  id: string,
+  message: string,
 };
 
 let ensure_table_exists = [%rapper

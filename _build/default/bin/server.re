@@ -23,25 +23,33 @@ let post_message =
       | Error(error) => failwith(error)
       };
     let.await id = Storage.insert_message(json);
-    `Assoc([("link", `String("http://localhost:3000/" ++ id))])
-    |> Response.of_json
+    Response.of_json(
+      `Assoc([("link", `String("http://localhost:3000/" ++ id))]),
+    )
+    |> Response.set_status(`Created)
+    |> Lwt.return;
+  });
+
+let delete_message =
+  App.delete("/:id", req => {
+    let id = Router.param(req, "id");
+    let.await success = Storage.delete_message(id);
+
+    Response.of_plain_text("DEL " ++ id)
     |> Response.set_status(`OK)
     |> Lwt.return;
   });
 
 let delete_message =
   App.delete("/:id", req => {
-    // TODO: returns a different response if the message does not exist
-
     let id = Router.param(req, "id");
-    let.await _success = Storage.delete_message(id);
-    Response.of_plain_text("DEL " ++ id)
+    let.await () = Storage.delete_message(id);
+    Response.of_plain_text("DELETE " ++ id)
     |> Response.set_status(`OK)
     |> Lwt.return;
   });
 
 let put_message =
-  // TODO: returns a different response of errors
   App.put("/", req => {
     let.await json_request = Request.to_json_exn(req);
 
@@ -51,17 +59,30 @@ let put_message =
       | Error(error) => failwith(error)
       };
 
-    let.await _success = Storage.update_message(json);
+    let.await () = Storage.update_message(json);
+
     Response.of_plain_text("UPDATE " ++ json.id)
     |> Response.set_status(`OK)
     |> Lwt.return;
   });
 
-let () =
-  App.empty
-  |> get_message
-  |> post_message
-  |> put_message
-  |> delete_message
-  |> App.run_command
-  |> ignore;
+let () = {
+  Logs.set_reporter(Logs_fmt.reporter());
+  Logs.set_level(Some(Logs.Error));
+
+  switch (
+    App.empty
+    |> get_message
+    |> post_message
+    |> put_message
+    |> delete_message
+    |> App.run_command'
+  ) {
+  | `Error
+  | `Not_running =>
+    print_endline(<Pastel color=Red> "🟥 - Failed to start" </Pastel>)
+  | `Ok(promise) =>
+    print_endline(<Pastel color=Green> "✅ - Run on port 3000" </Pastel>);
+    Lwt_main.run(promise);
+  };
+};
