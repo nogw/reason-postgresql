@@ -6,3 +6,6 @@ lib: [
 bin: [
   "_build/install/default/bin/server.exe"
 ]
+doc: [
+  "_build/install/default/doc/reason-postgresql/README.md"
+]
