@@ -2,7 +2,7 @@ let connection_pg_url = "postgresql://postgres:postgres@localhost:5432";
 
 exception Query_Error(string);
 
-let (let.await) = Lwt.bind;
+let ( let* ) = Lwt.bind;
 
 let pool =
   switch (
@@ -13,7 +13,7 @@ let pool =
   };
 
 let dispatch = f => {
-  let.await result = Caqti_lwt.Pool.use(f, pool);
+  let* result = Caqti_lwt.Pool.use(f, pool);
 
   switch (result) {
   | Ok(data) => Lwt.return(data)
@@ -79,6 +79,16 @@ let select = [%rapper
   )
 ];
 
+let select_all = [%rapper
+  get_many(
+    {sql|
+      SELECT @string{id}, @string{name}, @string{message}
+      FROM messages
+    |sql},
+    record_out,
+  )
+];
+
 let update = [%rapper
   execute(
     {sql|
@@ -101,22 +111,29 @@ let delete = [%rapper
 
 let insert_message = ({name, message}: message) => {
   let id = Uuidm.create(`V4) |> Uuidm.to_string;
-  let.await message = dispatch(insert({id, name, message}));
+  let* message = dispatch(insert({id, name, message}));
   message |> Lwt.return;
 };
 
 let select_message = id => {
-  let.await message = dispatch(select(~id));
+  let* message = dispatch(select(~id));
   message |> Lwt.return;
 };
 
+let select_all_messages = () => {
+  let* messages = dispatch(select_all());
+  messages
+  |> List.map(({name, message, _}) => {name, message})
+  |> Lwt.return;
+};
+
 let update_message = ({id, message}: message_to_update) => {
-  let.await update = dispatch(update({id, message}));
+  let* update = dispatch(update({id, message}));
   update |> Lwt.return;
 };
 
 let delete_message = id => {
-  let.await delete = dispatch(delete(~id));
+  let* delete = dispatch(delete(~id));
   delete |> Lwt.return;
 };
 
